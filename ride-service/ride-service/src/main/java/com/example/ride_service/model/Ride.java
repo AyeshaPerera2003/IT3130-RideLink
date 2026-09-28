@@ -6,6 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Ride {
@@ -14,10 +16,18 @@ public class Ride {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Passenger name is required")
     private String passengerName;
+
+    @NotBlank(message = "Pickup location is required")
     private String pickup;
+
+    @NotBlank(message = "Destination is required")
     private String destination;
+
+    @NotNull(message = "Driver ID is required")
     private Long driverId;
+
     @Enumerated(EnumType.STRING)
     private RideStatus status;
 

@@ -3,6 +3,7 @@ package com.example.ride_service.controller;
 import com.example.ride_service.model.Ride;
 import com.example.ride_service.service.RideService;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class RideController {
     }
 
     @PostMapping
-    public Ride createRide(@RequestBody Ride ride) {
+    public Ride createRide(@Valid @RequestBody Ride ride) {
         return rideService.createRide(ride);
     }
 
