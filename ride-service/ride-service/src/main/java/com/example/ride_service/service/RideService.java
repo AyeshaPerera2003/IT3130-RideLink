@@ -63,4 +63,18 @@ public class RideService {
 
     return rideRepository.save(ride);
     }
+    public Ride cancelRide(Long id) {
+    Ride ride = getRideById(id);
+
+    if (ride.getStatus() != RideStatus.REQUESTED &&
+            ride.getStatus() != RideStatus.ACCEPTED) {
+        throw new IllegalStateException(
+                "Ride can only be cancelled when it is requested or accepted"
+        );
+    }
+
+    ride.setStatus(RideStatus.CANCELLED);
+
+    return rideRepository.save(ride);
+    }
 }
