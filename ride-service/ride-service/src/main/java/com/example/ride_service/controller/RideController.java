@@ -38,4 +38,9 @@ public class RideController {
     public Ride startRide(@PathVariable Long id) {
     return rideService.startRide(id);
     }
+    
+    @PutMapping("/{id}/complete")
+    public Ride completeRide(@PathVariable Long id) {
+    return rideService.completeRide(id);
+    }
 }

@@ -52,4 +52,15 @@ public class RideService {
 
     return rideRepository.save(ride);
     }
+    public Ride completeRide(Long id) {
+    Ride ride = getRideById(id);
+
+    if (ride.getStatus() != RideStatus.STARTED) {
+        throw new IllegalStateException("Ride can only be completed after it has started");
+    }
+
+    ride.setStatus(RideStatus.COMPLETED);
+
+    return rideRepository.save(ride);
+    }
 }
