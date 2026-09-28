@@ -20,4 +20,15 @@ public class GlobalExceptionHandler {
                 "message", ex.getMessage()
         );
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, Object> handleIllegalState(IllegalStateException ex) {
+
+        return Map.of(
+                "status", 400,
+                "error", "Invalid Ride Status",
+                "message", ex.getMessage()
+        );
+    }
 }
