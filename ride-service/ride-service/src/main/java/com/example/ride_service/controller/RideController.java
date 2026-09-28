@@ -30,4 +30,12 @@ public class RideController {
     public Ride getRideById(@PathVariable Long id) {
         return rideService.getRideById(id);
     }
+    @PutMapping("/{id}/accept")
+     public Ride acceptRide(@PathVariable Long id) {
+        return rideService.acceptRide(id);
+    }
+    @PutMapping("/{id}/start")
+    public Ride startRide(@PathVariable Long id) {
+    return rideService.startRide(id);
+    }
 }

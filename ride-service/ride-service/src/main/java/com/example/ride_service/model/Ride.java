@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 @Entity
 public class Ride {
@@ -16,7 +18,8 @@ public class Ride {
     private String pickup;
     private String destination;
     private Long driverId;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private RideStatus status;
 
     public Ride() {
     }
@@ -61,11 +64,11 @@ public class Ride {
         this.driverId = driverId;
     }
 
-    public String getStatus() {
+    public RideStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(RideStatus status) {
         this.status = status;
     }
 }
