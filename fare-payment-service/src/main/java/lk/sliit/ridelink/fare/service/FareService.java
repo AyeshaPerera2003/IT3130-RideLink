@@ -76,6 +76,16 @@ public class FareService {
     }
 
     @Transactional(readOnly = true)
+    public Fare getFareById(Long fareId) {
+        if (fareId == null) {
+            throw new BadRequestException("fareId is required");
+        }
+
+        return fareRepository.findById(fareId)
+                .orElseThrow(() -> new ResourceNotFoundException("Fare not found with id " + fareId));
+    }
+
+    @Transactional(readOnly = true)
     public Fare getFareByRideId(Long rideId) {
         if (rideId == null) {
             throw new BadRequestException("rideId is required");
