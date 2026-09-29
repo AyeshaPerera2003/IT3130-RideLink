@@ -1,11 +1,13 @@
 package lk.sliit.ridelink.fare.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lk.sliit.ridelink.fare.dto.CreatePaymentRequest;
 import lk.sliit.ridelink.fare.dto.PaymentResponse;
 import lk.sliit.ridelink.fare.service.PaymentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/api/payments")
 public class PaymentController {
@@ -37,22 +40,30 @@ public class PaymentController {
     }
 
     @PostMapping("/{id}/confirm")
-    public PaymentResponse confirmPayment(@PathVariable Long id) {
+    public PaymentResponse confirmPayment(
+            @PathVariable @Positive(message = "payment id must be greater than 0") Long id
+    ) {
         return PaymentResponse.from(paymentService.confirmPayment(id));
     }
 
     @PostMapping("/{id}/fail")
-    public PaymentResponse failPayment(@PathVariable Long id) {
+    public PaymentResponse failPayment(
+            @PathVariable @Positive(message = "payment id must be greater than 0") Long id
+    ) {
         return PaymentResponse.from(paymentService.failPayment(id));
     }
 
     @GetMapping("/{id}")
-    public PaymentResponse getPaymentById(@PathVariable Long id) {
+    public PaymentResponse getPaymentById(
+            @PathVariable @Positive(message = "payment id must be greater than 0") Long id
+    ) {
         return PaymentResponse.from(paymentService.getPaymentById(id));
     }
 
     @GetMapping("/ride/{rideId}")
-    public List<PaymentResponse> getPaymentsByRideId(@PathVariable Long rideId) {
+    public List<PaymentResponse> getPaymentsByRideId(
+            @PathVariable @Positive(message = "rideId must be greater than 0") Long rideId
+    ) {
         return paymentService.getPaymentsByRideId(rideId).stream()
                 .map(PaymentResponse::from)
                 .toList();
