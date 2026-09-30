@@ -48,7 +48,7 @@ The service is designed to operate independently from the Ride and Account servi
 | Configuration     | Value                           |
 | ----------------- | ------------------------------- |
 | Service Name      | `fare-payment-service`          |
-| Port              | `8083`                          |
+| Port              | `8084`                          |
 | Database          | H2                              |
 | Database Name     | `ridelink_payments`             |
 | JDBC URL          | `jdbc:h2:mem:ridelink_payments` |
@@ -59,13 +59,13 @@ The service is designed to operate independently from the Ride and Account servi
 The service can be accessed locally at:
 
 ```text
-http://localhost:8083
+http://localhost:8084
 ```
 
 The service information endpoint is:
 
 ```text
-GET http://localhost:8083/
+GET http://localhost:8084/
 ```
 
 Example response:
@@ -74,7 +74,7 @@ Example response:
 {
   "service": "fare-payment-service",
   "status": "UP",
-  "port": 8083,
+  "port": 8084,
   "h2Console": "/h2-console",
   "api": {
     "fares": "/api/fares",
@@ -493,7 +493,7 @@ jdbc:h2:mem:ridelink_payments
 H2 Console:
 
 ```text
-http://localhost:8083/h2-console
+http://localhost:8084/h2-console
 ```
 
 Login details:
@@ -553,7 +553,7 @@ Open a terminal in the `fare-payment-service` directory and run:
 The application should start on:
 
 ```text
-http://localhost:8083
+http://localhost:8084
 ```
 
 ---
