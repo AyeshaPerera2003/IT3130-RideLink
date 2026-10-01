@@ -7,16 +7,16 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 public record ReceiptResponse(
-        Long id,
+        String id,
         String receiptNumber,
-        Long paymentId,
+        String paymentId,
         Long rideId,
         BigDecimal amount,
         PaymentMethod method,
         Instant issuedAt
 ) {
     public static ReceiptResponse from(Receipt receipt) {
-        Long paymentId = receipt.getPayment() == null ? null : receipt.getPayment().getId();
+        String paymentId = receipt.getPaymentId();
         return new ReceiptResponse(
                 receipt.getId(),
                 receipt.getReceiptNumber(),

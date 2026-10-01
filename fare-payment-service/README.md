@@ -37,8 +37,7 @@ The service is designed to operate independently from the Ride and Account servi
 * **Spring Boot:** 4.1.1
 * **Maven:** Maven Wrapper
 * **Spring Web:** REST API development
-* **Spring Data JPA:** Database persistence
-* **H2 Database:** In-memory development database
+* **Spring Data MongoDB:** Database persistence
 * **Jakarta Validation:** Request and path parameter validation
 
 ---
@@ -49,12 +48,10 @@ The service is designed to operate independently from the Ride and Account servi
 | ----------------- | ------------------------------- |
 | Service Name      | `fare-payment-service`          |
 | Port              | `8084`                          |
-| Database          | H2                              |
+| Database          | MongoDB (local)                 |
 | Database Name     | `ridelink_payments`             |
-| JDBC URL          | `jdbc:h2:mem:ridelink_payments` |
-| Database Username | `sa`                            |
-| Database Password | Empty                           |
-| H2 Console        | `/h2-console`                   |
+| Connection URI    | `mongodb://localhost:27017/ridelink_payments` |
+| GUI Client        | MongoDB Compass (`mongodb://localhost:27017`) |
 
 The service can be accessed locally at:
 
@@ -75,7 +72,7 @@ Example response:
   "service": "fare-payment-service",
   "status": "UP",
   "port": 8084,
-  "h2Console": "/h2-console",
+  "database": "MongoDB",
   "api": {
     "fares": "/api/fares",
     "payments": "/api/payments",
@@ -482,39 +479,31 @@ Example validation response:
 
 # 14. Database
 
-The service uses an H2 in-memory database during development.
+The service uses a local MongoDB server during development.
 
-JDBC URL:
-
-```text
-jdbc:h2:mem:ridelink_payments
-```
-
-H2 Console:
+Connection URI:
 
 ```text
-http://localhost:8084/h2-console
+mongodb://localhost:27017/ridelink_payments
 ```
 
-Login details:
+Collections include:
 
 ```text
-JDBC URL:  jdbc:h2:mem:ridelink_payments
-Username:  sa
-Password:  [empty]
+fares
+payments
+receipts
 ```
 
-The database schema is generated/managed by Hibernate based on the JPA entities.
+MongoDB persists data on disk, so records survive application restarts. To reset, drop the collections (or the whole database) from MongoDB Compass or `mongosh`.
 
-Main tables include:
+Unique indexes (created at startup by `MongoIndexConfig`):
 
 ```text
-FARE
-PAYMENT
-RECEIPT
+fares.rideId
+payments.transactionRef (sparse)
+receipts.receiptNumber
 ```
-
-Because the database is in-memory, data is cleared when the Spring Boot application is stopped and restarted.
 
 ---
 
@@ -739,8 +728,8 @@ The implementation was reviewed, tested, and integrated by the student. The stud
 | Component                 | Status                        |
 | ------------------------- | ----------------------------- |
 | Spring Boot project       | Completed                     |
-| H2 database               | Completed                     |
-| JPA entities              | Completed                     |
+| MongoDB (local)           | Completed                     |
+| Mongo documents           | Completed                     |
 | Repositories              | Completed                     |
 | Fare business logic       | Completed                     |
 | Payment business logic    | Completed                     |
@@ -769,7 +758,7 @@ POST /api/fares/calculate
 FareService
        │
        ▼
-Fare stored in H2
+Fare stored in MongoDB
        │
        ▼
 Create Payment

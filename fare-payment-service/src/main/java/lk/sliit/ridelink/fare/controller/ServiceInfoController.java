@@ -27,7 +27,7 @@ public class ServiceInfoController {
         body.put("service", "fare-payment-service");
         body.put("status", "UP");
         body.put("port", port);
-        body.put("h2Console", "/h2-console");
+        body.put("database", "MongoDB");
         body.put("api", api);
         return body;
     }

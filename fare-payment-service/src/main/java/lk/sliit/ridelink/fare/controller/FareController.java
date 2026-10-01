@@ -40,7 +40,7 @@ public class FareController {
 
     @GetMapping("/{id}")
     public FareResponse getFareById(
-            @PathVariable @Positive(message = "fare id must be greater than 0") Long id
+            @PathVariable String id
     ) {
         return FareResponse.from(fareService.getFareById(id));
     }

@@ -1,81 +1,51 @@
 package lk.sliit.ridelink.fare.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
-@Entity
-@Table(name = "fares")
+@Document(collection = "fares")
 public class Fare {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(nullable = false, unique = true)
+    @Indexed(unique = true)
     private Long rideId;
 
-    @Column(nullable = false)
     private String passengerId;
 
-    @Column(nullable = false)
     private String driverId;
 
-    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal distanceKm;
 
-    @Column(nullable = false)
     private Integer durationMinutes;
 
-    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal baseFare;
 
-    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal perKmRate;
 
-    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal perMinuteRate;
 
-    @Column(nullable = false, precision = 6, scale = 2)
-    private BigDecimal surgeMultiplier;
+    private BigDecimal surgeMultiplier = BigDecimal.ONE;
 
-    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount;
 
-    @Column(nullable = false, length = 3)
-    private String currency;
+    private String currency = "LKR";
 
-    @Column(nullable = false, updatable = false)
-    private Instant createdAt;
+    private Instant createdAt = Instant.now();
 
     public Fare() {
     }
 
-    @PrePersist
-    void onCreate() {
-        if (createdAt == null) {
-            createdAt = Instant.now();
-        }
-        if (currency == null) {
-            currency = "LKR";
-        }
-        if (surgeMultiplier == null) {
-            surgeMultiplier = BigDecimal.ONE;
-        }
-    }
-
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -41,21 +41,21 @@ public class PaymentController {
 
     @PostMapping("/{id}/confirm")
     public PaymentResponse confirmPayment(
-            @PathVariable @Positive(message = "payment id must be greater than 0") Long id
+            @PathVariable String id
     ) {
         return PaymentResponse.from(paymentService.confirmPayment(id));
     }
 
     @PostMapping("/{id}/fail")
     public PaymentResponse failPayment(
-            @PathVariable @Positive(message = "payment id must be greater than 0") Long id
+            @PathVariable String id
     ) {
         return PaymentResponse.from(paymentService.failPayment(id));
     }
 
     @GetMapping("/{id}")
     public PaymentResponse getPaymentById(
-            @PathVariable @Positive(message = "payment id must be greater than 0") Long id
+            @PathVariable String id
     ) {
         return PaymentResponse.from(paymentService.getPaymentById(id));
     }
