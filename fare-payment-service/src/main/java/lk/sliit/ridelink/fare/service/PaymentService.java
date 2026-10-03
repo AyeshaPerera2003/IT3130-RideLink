@@ -11,7 +11,6 @@ import lk.sliit.ridelink.fare.model.Receipt;
 import lk.sliit.ridelink.fare.repository.PaymentRepository;
 import lk.sliit.ridelink.fare.repository.ReceiptRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -43,7 +42,6 @@ public class PaymentService {
      * Starts a simulated payment for an existing fare.
      * Ride status is not verified yet; the caller must only send a completed rideId.
      */
-    @Transactional
     public Payment initiatePayment(
             Long rideId,
             String payerAccountId,
@@ -81,7 +79,7 @@ public class PaymentService {
         }
 
         Payment payment = new Payment();
-        payment.setFare(fare);
+        payment.setFareId(fare.getId());
         payment.setRideId(rideId);
         payment.setPayerAccountId(payerAccountId.trim());
         payment.setAmount(requestedAmount);
@@ -96,8 +94,7 @@ public class PaymentService {
      * Simulated capture: no real card/wallet gateway is called.
      * Cash, card, and wallet all move PENDING → SUCCESS, then a receipt is issued.
      */
-    @Transactional
-    public Payment confirmPayment(Long paymentId) {
+    public Payment confirmPayment(String paymentId) {
         Payment payment = getPaymentById(paymentId);
 
         if (payment.getStatus() == PaymentStatus.SUCCESS) {
@@ -116,8 +113,7 @@ public class PaymentService {
         return saved;
     }
 
-    @Transactional
-    public Payment failPayment(Long paymentId) {
+    public Payment failPayment(String paymentId) {
         Payment payment = getPaymentById(paymentId);
 
         if (payment.getStatus() == PaymentStatus.FAILED) {
@@ -133,9 +129,8 @@ public class PaymentService {
         return paymentRepository.save(payment);
     }
 
-    @Transactional(readOnly = true)
-    public Payment getPaymentById(Long paymentId) {
-        if (paymentId == null) {
+    public Payment getPaymentById(String paymentId) {
+        if (paymentId == null || paymentId.isBlank()) {
             throw new BadRequestException("paymentId is required");
         }
 
@@ -143,7 +138,6 @@ public class PaymentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Payment not found with id " + paymentId));
     }
 
-    @Transactional(readOnly = true)
     public List<Payment> getPaymentsByRideId(Long rideId) {
         if (rideId == null) {
             throw new BadRequestException("rideId is required");
@@ -151,23 +145,22 @@ public class PaymentService {
         return paymentRepository.findByRideId(rideId);
     }
 
-    @Transactional(readOnly = true)
-    public Receipt getReceiptByPaymentId(Long paymentId) {
+    public Receipt getReceiptByPaymentId(String paymentId) {
         getPaymentById(paymentId);
-        return receiptRepository.findByPayment_Id(paymentId)
+        return receiptRepository.findByPaymentId(paymentId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Receipt not found for paymentId " + paymentId
                 ));
     }
 
     private Receipt issueReceipt(Payment payment) {
-        if (receiptRepository.existsByPayment_Id(payment.getId())) {
-            return receiptRepository.findByPayment_Id(payment.getId()).orElseThrow();
+        if (receiptRepository.existsByPaymentId(payment.getId())) {
+            return receiptRepository.findByPaymentId(payment.getId()).orElseThrow();
         }
 
         Receipt receipt = new Receipt();
         receipt.setReceiptNumber("RCP-" + payment.getRideId() + "-" + payment.getId());
-        receipt.setPayment(payment);
+        receipt.setPaymentId(payment.getId());
         receipt.setRideId(payment.getRideId());
         receipt.setAmount(payment.getAmount());
         receipt.setMethod(payment.getMethod());

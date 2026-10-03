@@ -1,12 +1,12 @@
 package lk.sliit.ridelink.fare.repository;
 
 import lk.sliit.ridelink.fare.model.Fare;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface FareRepository extends JpaRepository<Fare, Long> {
+public interface FareRepository extends MongoRepository<Fare, String> {
 
     Optional<Fare> findByRideId(Long rideId);
 

@@ -8,8 +8,8 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 public record PaymentResponse(
-        Long id,
-        Long fareId,
+        String id,
+        String fareId,
         Long rideId,
         String payerAccountId,
         BigDecimal amount,
@@ -20,7 +20,7 @@ public record PaymentResponse(
         Instant createdAt
 ) {
     public static PaymentResponse from(Payment payment) {
-        Long fareId = payment.getFare() == null ? null : payment.getFare().getId();
+        String fareId = payment.getFareId();
         return new PaymentResponse(
                 payment.getId(),
                 fareId,

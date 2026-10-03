@@ -1,85 +1,54 @@
 package lk.sliit.ridelink.fare.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
-@Entity
-@Table(name = "payments")
+@Document(collection = "payments")
 public class Payment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "fare_id", nullable = false)
-    private Fare fare;
+    private String fareId;
 
-    @Column(nullable = false)
     private Long rideId;
 
-    @Column(nullable = false)
     private String payerAccountId;
 
-    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
     private PaymentMethod method;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private PaymentStatus status;
+    private PaymentStatus status = PaymentStatus.PENDING;
 
-    @Column(unique = true, length = 64)
+    @Indexed(unique = true, sparse = true)
     private String transactionRef;
 
     private Instant paidAt;
 
-    @Column(nullable = false, updatable = false)
-    private Instant createdAt;
+    private Instant createdAt = Instant.now();
 
     public Payment() {
     }
 
-    @PrePersist
-    void onCreate() {
-        if (createdAt == null) {
-            createdAt = Instant.now();
-        }
-        if (status == null) {
-            status = PaymentStatus.PENDING;
-        }
-    }
-
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Fare getFare() {
-        return fare;
+    public String getFareId() {
+        return fareId;
     }
 
-    public void setFare(Fare fare) {
-        this.fare = fare;
+    public void setFareId(String fareId) {
+        this.fareId = fareId;
     }
 
     public Long getRideId() {

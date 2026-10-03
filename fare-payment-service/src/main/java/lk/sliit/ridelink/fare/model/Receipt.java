@@ -1,64 +1,39 @@
 package lk.sliit.ridelink.fare.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
-@Entity
-@Table(name = "receipts")
+@Document(collection = "receipts")
 public class Receipt {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(nullable = false, unique = true, length = 40)
+    @Indexed(unique = true)
     private String receiptNumber;
 
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_id", nullable = false, unique = true)
-    private Payment payment;
+    private String paymentId;
 
-    @Column(nullable = false)
     private Long rideId;
 
-    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
     private PaymentMethod method;
 
-    @Column(nullable = false)
-    private Instant issuedAt;
+    private Instant issuedAt = Instant.now();
 
     public Receipt() {
     }
 
-    @PrePersist
-    void onCreate() {
-        if (issuedAt == null) {
-            issuedAt = Instant.now();
-        }
-    }
-
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -70,12 +45,12 @@ public class Receipt {
         this.receiptNumber = receiptNumber;
     }
 
-    public Payment getPayment() {
-        return payment;
+    public String getPaymentId() {
+        return paymentId;
     }
 
-    public void setPayment(Payment payment) {
-        this.payment = payment;
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
     }
 
     public Long getRideId() {

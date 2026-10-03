@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 public record FareResponse(
-        Long id,
+        String id,
         Long rideId,
         String passengerId,
         String driverId,

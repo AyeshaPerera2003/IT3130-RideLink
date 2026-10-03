@@ -7,7 +7,6 @@ import lk.sliit.ridelink.fare.model.Fare;
 import lk.sliit.ridelink.fare.repository.FareRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -45,7 +44,6 @@ public class FareService {
      * Calculates and stores a fare for a completed ride.
      * Ride status is not verified yet; the caller must only send a completed rideId.
      */
-    @Transactional
     public Fare calculateFare(
             Long rideId,
             String passengerId,
@@ -75,9 +73,8 @@ public class FareService {
         return fareRepository.save(fare);
     }
 
-    @Transactional(readOnly = true)
-    public Fare getFareById(Long fareId) {
-        if (fareId == null) {
+    public Fare getFareById(String fareId) {
+        if (fareId == null || fareId.isBlank()) {
             throw new BadRequestException("fareId is required");
         }
 
@@ -85,7 +82,6 @@ public class FareService {
                 .orElseThrow(() -> new ResourceNotFoundException("Fare not found with id " + fareId));
     }
 
-    @Transactional(readOnly = true)
     public Fare getFareByRideId(Long rideId) {
         if (rideId == null) {
             throw new BadRequestException("rideId is required");
