@@ -1,16 +1,16 @@
 package com.ridelink.driver_service;
 
-import com.ridelink.driver_service.entity.Driver;
+import com.ridelink.driver_service.model.Driver;
 import com.ridelink.driver_service.repository.DriverRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaTest
+@SpringBootTest
 public class DriverServiceTest {
 
     @Autowired
@@ -22,7 +22,7 @@ public class DriverServiceTest {
         Driver driver = new Driver();
         driver.setName("Test Driver");
         driver.setPhone("0711234567");
-        driver.setServiceArea("Malabe"); // මෙතැන camelCase එකට වෙනස් කළා
+        driver.setServiceArea("Malabe");
         driver.setAvailability(true);
         driver.setLatitude(6.9022);
         driver.setLongitude(79.8612);
@@ -32,7 +32,7 @@ public class DriverServiceTest {
 
         // Then
         assertThat(savedDriver).isNotNull();
-        assertThat(savedDriver.getId()).isGreaterThan(0L);
+        assertThat(savedDriver.getId()).isNotNull(); // MongoDB ID එක String (ObjectId) එකක් නිසා isNotNull පාවිච්චි කරයි
         
         Optional<Driver> foundDriver = driverRepository.findById(savedDriver.getId());
         assertThat(foundDriver).isPresent();

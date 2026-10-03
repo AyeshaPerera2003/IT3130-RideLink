@@ -1,7 +1,7 @@
 package com.ridelink.driver_service.controller;
 
-import com.ridelink.driver_service.entity.Driver;
-import com.ridelink.driver_service.repository.DriverRepository;
+import com.ridelink.driver_service.model.Driver;
+import com.ridelink.driver_service.service.DriverService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,84 +15,79 @@ import java.util.Optional;
 public class DriverController {
 
     @Autowired
-    private DriverRepository driverRepository;
+    private DriverService driverService;
 
     // 1. Get the list of all drivers (GET)
     @GetMapping
     public List<Driver> getAllDrivers() {
-        return driverRepository.findAll();
+        return driverService.getAllDrivers();
     }
 
     // 2. Get the driver by ID (GET)
     @GetMapping("/{id}")
-    public ResponseEntity<Driver> getDriverById(@PathVariable Long id) {
-        Optional<Driver> driver = driverRepository.findById(id);
+    public ResponseEntity<Driver> getDriverById(@PathVariable String id) {
+        Optional<Driver> driver = driverService.getDriverById(id);
         return driver.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // 3. Create a new driver (POST) - @Valid is included
+    // 3. Create a new driver (POST)
     @PostMapping
     public ResponseEntity<Driver> createDriver(@Valid @RequestBody Driver driver) {
-        Driver savedDriver = driverRepository.save(driver);
+        Driver savedDriver = driverService.saveDriver(driver);
         return ResponseEntity.status(201).body(savedDriver);
     }
 
-    // 4. Update driver information (PUT) - @Valid is included
+    // 4. Update driver information (PUT)
     @PutMapping("/{id}")
-    public ResponseEntity<Driver> updateDriver(@PathVariable Long id, @Valid @RequestBody Driver driverDetails) {
-        Optional<Driver> optionalDriver = driverRepository.findById(id);
-        if (optionalDriver.isPresent()) {
-            Driver driver = optionalDriver.get();
-            driver.setName(driverDetails.getName());
-            driver.setPhone(driverDetails.getPhone());
-            driver.setAvailability(driverDetails.isAvailability());
-            driver.setServiceArea(driverDetails.getServiceArea());
-            driver.setLatitude(driverDetails.getLatitude());
-            driver.setLongitude(driverDetails.getLongitude());
-            return ResponseEntity.ok(driverRepository.save(driver));
-        } else {
+    public ResponseEntity<Driver> updateDriver(@PathVariable String id, @Valid @RequestBody Driver driverDetails) {
+        try {
+            Driver updatedDriver = driverService.updateDriver(id, driverDetails);
+            return ResponseEntity.ok(updatedDriver);
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     // 5. Update driver's availability (PATCH)
     @PatchMapping("/{id}/availability")
-    public ResponseEntity<Driver> updateAvailability(@PathVariable Long id, @RequestParam boolean availability) {
-        Optional<Driver> optionalDriver = driverRepository.findById(id);
-        if (optionalDriver.isPresent()) {
-            Driver driver = optionalDriver.get();
-            driver.setAvailability(availability);
-            return ResponseEntity.ok(driverRepository.save(driver));
-        } else {
+    public ResponseEntity<Driver> updateAvailability(@PathVariable String id, @RequestParam boolean availability) {
+        try {
+            Driver updatedDriver = driverService.updateAvailability(id, availability);
+            return ResponseEntity.ok(updatedDriver);
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     // 6. Update driver's GPS location (PATCH)
     @PatchMapping("/{id}/location")
-    public ResponseEntity<Driver> updateLocation(@PathVariable Long id, @RequestParam double latitude, @RequestParam double longitude) {
-        Optional<Driver> optionalDriver = driverRepository.findById(id);
-        if (optionalDriver.isPresent()) {
-            Driver driver = optionalDriver.get();
-            driver.setLatitude(latitude);
-            driver.setLongitude(longitude);
-            return ResponseEntity.ok(driverRepository.save(driver));
-        } else {
+    public ResponseEntity<Driver> updateLocation(@PathVariable String id, @RequestParam double latitude, @RequestParam double longitude) {
+        try {
+            Driver updatedDriver = driverService.updateLocation(id, latitude, longitude);
+            return ResponseEntity.ok(updatedDriver);
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    // 7. Search drivers by service area and availability (GET)
+    // 7. Search drivers by service area and availability (GET) - For general use & Ride Service
     @GetMapping("/search")
     public List<Driver> searchDrivers(@RequestParam String serviceArea, @RequestParam boolean availability) {
-        return driverRepository.findByServiceAreaAndAvailability(serviceArea, availability);
+        return driverService.searchDrivers(serviceArea, availability);
     }
 
-    // 8. Delete a driver (DELETE)
+    // 8. Specific endpoint for Ride Service to get available drivers in an area
+    @GetMapping("/available")
+    public ResponseEntity<List<Driver>> getAvailableDrivers(@RequestParam String serviceArea) {
+        List<Driver> drivers = driverService.searchDrivers(serviceArea, true);
+        return ResponseEntity.ok(drivers);
+    }
+
+    // 9. Delete a driver (DELETE)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDriver(@PathVariable Long id) {
-        if (driverRepository.existsById(id)) {
-            driverRepository.deleteById(id);
+    public ResponseEntity<Void> deleteDriver(@PathVariable String id) {
+        boolean deleted = driverService.deleteDriver(id);
+        if (deleted) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();

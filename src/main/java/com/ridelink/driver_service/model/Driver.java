@@ -1,15 +1,14 @@
-package com.ridelink.driver_service.entity;
+package com.ridelink.driver_service.model;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import jakarta.validation.constraints.Pattern;
 
-@Entity
-@Table(name = "drivers")
+@Document(collection = "drivers")
 public class Driver {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     private String name;
 
@@ -24,7 +23,7 @@ public class Driver {
     // Constructors
     public Driver() {}
 
-    public Driver(Long id, String name, String phone, boolean availability, String serviceArea, double latitude, double longitude) {
+    public Driver(String id, String name, String phone, boolean availability, String serviceArea, double latitude, double longitude) {
         this.id = id;
         this.name = name;
         this.phone = phone;
@@ -35,8 +34,8 @@ public class Driver {
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
